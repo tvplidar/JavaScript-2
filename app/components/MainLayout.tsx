@@ -1,54 +1,120 @@
 'use client';
+
 import { Layout, Menu } from 'antd';
+import { useRouter, usePathname } from 'next/navigation';
 import React, { ReactNode } from 'react';
+import {
+  AppstoreOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 
 const { Header, Sider, Content } = Layout;
 
-export default function MainLayout({ children }: { children: ReactNode }) {
+// Menu configuration with icons
+const menuItems = [
+  {
+    key: '/allproduct',
+    label: 'All Products',
+    icon: <AppstoreOutlined />,
+  },
+  {
+    key: '/product-management',
+    label: 'Product Management',
+    icon: <SettingOutlined />,
+  },
+  {
+    key: '/user-management',
+    label: 'User Management',
+    icon: <UserOutlined />,
+  },
+];
+
+// Style constants for consistency
+const styles = {
+  layout: {
+    minHeight: '100vh',
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    height: 70,
+    backgroundColor: '#001529',
+    padding: '0 24px',
+    display: 'flex',
+    alignItems: 'center',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+    zIndex: 1000,
+  },
+  headerTitle: {
+    margin: 0,
+    fontSize: 24,
+    fontWeight: 600,
+    color: '#fff',
+    letterSpacing: '0.5px',
+  },
+  sider: {
+    backgroundColor: '#fff',
+    paddingTop: 16,
+    boxShadow: '2px 0 8px rgba(0, 0, 0, 0.05)',
+    borderRight: '1px solid #f0f0f0',
+  },
+  menu: {
+    border: 'none',
+  },
+  content: {
+    margin: '16px',
+    backgroundColor: '#fff',
+    padding: 24,
+    borderRadius: 8,
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+    minHeight: 'calc(100vh - 102px)', // Adjust for header and margins
+  },
+} as const;
+
+interface MainLayoutProps {
+  children: ReactNode;
+}
+
+export default function MainLayout({ children }: MainLayoutProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleMenuClick = (item: { key: string }) => {
+    router.push(item.key);
+  };
+
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Header style={{
-        height: 70,
-        backgroundColor: '#001529',
-        padding: '0 20px',
-        display: 'flex',
-        alignItems: 'center',
-        color: '#fff',
-      }}>
-        <h1 style={{ margin: 0, fontSize: 20, color: 'white' }}>My App Header</h1>
+    <Layout style={styles.layout}>
+      {/* Header Section */}
+      <Header style={styles.header}>
+        <h1 style={styles.headerTitle}>
+          Dashboard
+        </h1>
       </Header>
 
       <Layout>
+        {/* Sidebar Section */}
         <Sider
-          width={200}
-          style={{
-            minWidth: 100,
-            maxWidth: 200,
-            background: '#fff',
-            paddingTop: 10,
-          }}
+          width={220}
+          style={styles.sider}
+          breakpoint="lg"
+          collapsedWidth="0"
         >
           <Menu
             mode="inline"
-            defaultSelectedKeys={['1']}
-            items={[
-              { key: '1', label: 'Dashboard' },
-              { key: '2', label: 'Profile' },
-              { key: '3', label: 'Settings' },
-            ]}
+            selectedKeys={[pathname]}
+            items={menuItems}
+            onClick={handleMenuClick}
+            style={styles.menu}
           />
         </Sider>
 
-        <Content
-          style={{
-            margin: '10px 20px 0 10px',
-            background: '#fff',
-            padding: 20,
-            flex: 1,
-          }}
-        >
-          {children}
-        </Content>
+        {/* Main Content Section */}
+        <Layout>
+          <Content style={styles.content}>
+            {children}
+          </Content>
+        </Layout>
       </Layout>
     </Layout>
   );
