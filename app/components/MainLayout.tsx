@@ -11,10 +11,10 @@ import {
 
 const { Header, Sider, Content } = Layout;
 
-// Menu configuration with icons
+
 const menuItems = [
   {
-    key: '/allproduct',
+    key: '/product',
     label: 'All Products',
     icon: <AppstoreOutlined />,
   },
@@ -30,7 +30,7 @@ const menuItems = [
   },
 ];
 
-// Style constants for consistency
+
 const styles = {
   layout: {
     minHeight: '100vh',
@@ -67,7 +67,7 @@ const styles = {
     padding: 24,
     borderRadius: 8,
     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-    minHeight: 'calc(100vh - 102px)', // Adjust for header and margins
+    minHeight: 'calc(100vh - 102px)', 
   },
 } as const;
 
@@ -77,7 +77,11 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   const router = useRouter();
-  const pathname = usePathname();
+  const pathname = usePathname() || '';
+
+
+  const selectedKey =
+    menuItems.find((item) => pathname.startsWith(item.key))?.key || '';
 
   const handleMenuClick = (item: { key: string }) => {
     router.push(item.key);
@@ -85,35 +89,26 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <Layout style={styles.layout}>
-      {/* Header Section */}
+   
       <Header style={styles.header}>
-        <h1 style={styles.headerTitle}>
-          Dashboard
-        </h1>
+        <h1 style={styles.headerTitle}>Dashboard</h1>
       </Header>
 
       <Layout>
-        {/* Sidebar Section */}
-        <Sider
-          width={220}
-          style={styles.sider}
-          breakpoint="lg"
-          collapsedWidth="0"
-        >
+   
+        <Sider width={220} style={styles.sider} breakpoint="lg" collapsedWidth="0">
           <Menu
             mode="inline"
-            selectedKeys={[pathname]}
+            selectedKeys={selectedKey ? [selectedKey] : []}
             items={menuItems}
             onClick={handleMenuClick}
             style={styles.menu}
           />
         </Sider>
 
-        {/* Main Content Section */}
+       
         <Layout>
-          <Content style={styles.content}>
-            {children}
-          </Content>
+          <Content style={styles.content}>{children}</Content>
         </Layout>
       </Layout>
     </Layout>
