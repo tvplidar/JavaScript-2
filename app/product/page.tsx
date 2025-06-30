@@ -5,22 +5,31 @@ import { useEffect, useState } from 'react';
 import type { ColumnsType } from 'antd/es/table';
 import 'antd/dist/reset.css';
 
+
 type Product = {
   id: number;
-  PRODUCT_NAME: string;
-  PRICE: number;
-  CAT_ID: number;
+  pro_name: string;
+  price: number;
+  cat_id: number;
   create_date: string;
 };
 
 export default function ProductPage() {
   const [data, setData] = useState<Product[]>([]);
 
-  useEffect(() => {
-    fetch('/api/product')
-      .then(res => res.json())
-      .then(data => setData(data));
-  }, []);
+useEffect(() => {
+  async function load() {
+    try {
+      const res = await fetch("http://localhost:3001/api/products");
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      setData(data);
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
+  }
+  load();
+}, []);
 
   const columns: ColumnsType<Product> = [
     {
@@ -32,19 +41,19 @@ export default function ProductPage() {
     },
     {
       title: 'Product Name',
-      dataIndex: 'PRODUCT_NAME',
-      key: 'PRODUCT_NAME',
+      dataIndex: 'pro_name',
+      key: 'pro_name',
     },
     {
       title: 'Price',
-      dataIndex: 'PRICE',
-      key: 'PRICE',
+      dataIndex: 'price',
+      key: 'price',
       render: (price) => `${price} USD`,
     },
     {
       title: 'Category',
-      dataIndex: 'CAT_ID',
-      key: 'CAT_ID',
+      dataIndex: 'cat_id',
+      key: 'cat_id',
     },
     {
       title: 'Create Date',
